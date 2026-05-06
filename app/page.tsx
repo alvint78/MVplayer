@@ -22,7 +22,7 @@ export default function RetroTVPage() {
 
   return (
     <div
-      className="min-h-screen flex items-center justify-center p-10"
+      className="min-h-screen flex items-center justify-center p-0 sm:p-10"
       style={{
         background: '#0a0a0a',
       }}
@@ -170,7 +170,7 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
 
   return (
     <main
-      className="min-h-screen flex flex-col items-center justify-center p-4"
+      className="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4"
       style={{ 
         background: 'linear-gradient(180deg, #09090b 0%, #0f0d0a 50%, #1a1512 100%)',
       }}
