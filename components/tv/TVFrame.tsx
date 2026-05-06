@@ -120,66 +120,66 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
             )}
           </div>
 
-          {/* Controls row - horizontal on mobile */}
+          {/* Controls row - knobs side by side */}
           <div
-            className="flex items-center justify-between gap-4"
             style={{
               background: 'linear-gradient(180deg, #27272a 0%, #1f1f22 100%)',
               borderRadius: 12,
-              padding: '12px 16px',
+              padding: '12px 8px 8px',
               marginBottom: 12,
             }}
           >
-            {/* Channel knob - scaled down to 90px */}
-            <div style={{ flex: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ transform: 'scale(0.9)', transformOrigin: 'center' }}>
-                <ChannelKnob currentDecade={currentDecade} onChange={onDecadeChange} />
-              </div>
-            </div>
-
-            {/* Branding + Speaker in center */}
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
-              <div className="flex items-center gap-2">
-                <span
+            {/* Channel + Volume knobs in a row */}
+            <div className="flex items-start justify-around">
+              {/* Channel knob — fixed-size wrapper so scaling doesn't break flex layout */}
+              <div
+                style={{
+                  position: 'relative',
+                  width: 148,
+                  height: 168,
+                  flexShrink: 0,
+                  overflow: 'visible',
+                }}
+              >
+                <div
                   style={{
-                    fontFamily: 'Georgia, serif',
-                    fontSize: 16,
-                    letterSpacing: '-0.02em',
-                    color: '#e4e4e7',
-                    textShadow: '0 2px 4px rgba(0,0,0,0.8)',
-                    fontStyle: 'italic',
+                    position: 'absolute',
+                    top: '50%',
+                    left: '50%',
+                    transform: 'translate(-50%, -50%) scale(0.82)',
                   }}
                 >
-                  RetroTV
-                </span>
-                <div className="flex h-1.5 w-8 rounded overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
-                  <div className="flex-1" style={{ background: '#ef4444' }} />
-                  <div className="flex-1" style={{ background: '#22c55e' }} />
-                  <div className="flex-1" style={{ background: '#3b82f6' }} />
+                  <ChannelKnob currentDecade={currentDecade} onChange={onDecadeChange} />
                 </div>
               </div>
-              <div
-                style={{ 
-                  width: 80,
-                  height: 32,
-                  background: `repeating-linear-gradient(
-                    to bottom,
-                    #1a1a1c 0px,
-                    #1a1a1c 2px,
-                    #0f0f10 2px,
-                    #0f0f10 4px
-                  )`,
-                  borderRadius: 4,
-                  boxShadow: 'inset 0 1px 3px rgba(0,0,0,0.8)',
-                }}
-                aria-hidden="true"
-              />
+
+              {/* Volume knob — natural size (120px wide) */}
+              <div style={{ flexShrink: 0 }}>
+                <VolumeKnob volume={volume} onChange={onVolumeChange} />
+              </div>
             </div>
 
-            {/* Volume knob - scaled down to 90px */}
-            <div style={{ flex: 0, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <div style={{ transform: 'scale(0.9)', transformOrigin: 'center' }}>
-                <VolumeKnob volume={volume} onChange={onVolumeChange} />
+            {/* Branding row below knobs */}
+            <div className="flex items-center justify-center gap-2 mt-1">
+              <span
+                style={{
+                  fontFamily: 'Georgia, serif',
+                  fontSize: 14,
+                  letterSpacing: '-0.02em',
+                  color: '#e4e4e7',
+                  textShadow: '0 2px 4px rgba(0,0,0,0.8)',
+                  fontStyle: 'italic',
+                }}
+              >
+                RetroTV
+              </span>
+              <div
+                className="flex h-1.5 w-8 rounded overflow-hidden"
+                style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.5)' }}
+              >
+                <div className="flex-1" style={{ background: '#ef4444' }} />
+                <div className="flex-1" style={{ background: '#22c55e' }} />
+                <div className="flex-1" style={{ background: '#3b82f6' }} />
               </div>
             </div>
           </div>
