@@ -1,0 +1,162 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --background: #09090b;
+  --foreground: #fafafa;
+  --radius: 0.625rem;
+
+  /* RetroTV custom tokens */
+  --tv-enclosure: #1c1c1e;
+  --tv-panel: #27272a;
+  --tv-knob: #18181b;
+  --tv-phosphor: #4ade80;
+  --tv-led: #dc2626;
+  --tv-amber: #f59e0b;
+  --tv-desk: #1a1512;
+  --font-vt323: 'VT323', monospace;
+  
+  /* Display adjustment state */
+  --brightness: 1;
+  --contrast: 1;
+  --saturate: 1;
+}
+
+@theme inline {
+  --font-sans: var(--font-vt323), monospace;
+  --font-mono: var(--font-vt323), monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-zinc-700 outline-zinc-600/50;
+    box-sizing: border-box;
+  }
+  body {
+    background: #09090b;
+    color: #fafafa;
+  }
+}
+
+/* CRT flicker animation */
+@keyframes crt-flicker {
+  0%   { opacity: 1; }
+  92%  { opacity: 1; }
+  93%  { opacity: 0.96; }
+  94%  { opacity: 1; }
+  96%  { opacity: 0.97; }
+  100% { opacity: 1; }
+}
+
+.crt-flicker {
+  animation: crt-flicker 3s infinite;
+}
+
+/* Power LED pulse */
+@keyframes led-pulse {
+  0%, 100% { box-shadow: 0 0 8px 3px #dc2626, 0 0 16px 6px rgba(220,38,38,0.5); }
+  50%      { box-shadow: 0 0 4px 2px #dc2626, 0 0 8px 4px rgba(220,38,38,0.3); }
+}
+
+.led-pulse {
+  animation: led-pulse 2s ease-in-out infinite;
+}
+
+/* Power button press animation */
+@keyframes power-press {
+  0%   { transform: translateY(0) scale(1); }
+  50%  { transform: translateY(2px) scale(0.96); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+.power-press {
+  animation: power-press 0.15s ease-out;
+}
+
+/* Scanlines overlay - enhanced opacity */
+.scanlines::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 2px,
+    rgba(0, 0, 0, 0.15) 2px,
+    rgba(0, 0, 0, 0.15) 4px
+  );
+  pointer-events: none;
+  z-index: 10;
+  border-radius: inherit;
+}
+
+/* Speaker grille lines */
+.speaker-grille {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    #3f3f46 3px,
+    #3f3f46 4px
+  );
+}
+
+/* Knob drag cursor */
+.knob-drag {
+  cursor: grab;
+  user-select: none;
+  touch-action: none;
+}
+.knob-drag:active {
+  cursor: grabbing;
+}
+
+/* Embossed text for decade labels */
+.decade-label {
+  text-shadow: 
+    0 1px 0 rgba(255,255,255,0.1),
+    0 -1px 0 rgba(0,0,0,0.8),
+    0 0 8px currentColor;
+}
+
+.decade-label-active {
+  text-shadow: 
+    0 1px 0 rgba(255,255,255,0.2),
+    0 -1px 0 rgba(0,0,0,0.8),
+    0 0 12px currentColor,
+    0 0 20px currentColor;
+}
+
+/* TV drop shadow for desk effect */
+.tv-shadow {
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.95),
+    0 15px 40px rgba(0,0,0,0.9),
+    0 5px 15px rgba(0,0,0,0.8),
+    0 0 0 1px #27272a,
+    inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+/* CRT display filter wrapper */
+.crt-display {
+  filter: brightness(var(--brightness)) contrast(var(--contrast)) saturate(var(--saturate));
+  transition: filter 0.3s ease;
+}
+
+/* Grayscale mode for B&W */
+.grayscale-mode {
+  filter: brightness(var(--brightness)) contrast(var(--contrast)) saturate(0) !important;
+}
+
+/* Sepia mode for vintage B&W */
+.sepia-mode {
+  filter: brightness(var(--brightness)) contrast(var(--contrast)) saturate(0) sepia(0.3) !important;
+}
