@@ -6,6 +6,7 @@ import TVFrame from '@/components/tv/TVFrame'
 import type { ScreenHandle } from '@/components/tv/Screen'
 import type { Decade } from '@/lib/videos'
 import { getRandomVideo } from '@/lib/videos'
+import { useClickSound } from '@/hooks/useClickSound'
 
 const HISTORY_LIMIT = 5
 const ALL_DECADES: Decade[] = ['60s', '70s', '80s', '90s', '00s', '10s', '20s']
