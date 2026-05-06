@@ -143,8 +143,16 @@ function ColorKnob({
   onChange: (mode: ColorMode) => void
 }) {
   const modes: ColorMode[] = ['color', 'bw', 'sepia']
+  const { playClick } = useClickSound()
+  
+  const modeColors = {
+    color: 'rgba(255, 255, 255, 0)',
+    bw: 'rgba(120, 120, 120, 0.5)',
+    sepia: 'rgba(200, 140, 60, 0.5)',
+  }
 
   const handleClick = () => {
+    playClick()
     const currentIndex = modes.indexOf(colorMode)
     const nextIndex = (currentIndex + 1) % modes.length
     onChange(modes[nextIndex])
@@ -162,7 +170,8 @@ function ColorKnob({
           className="absolute inset-0 rounded-full"
           style={{
             background: 'linear-gradient(145deg, #3a3a3f 0%, #1a1a1c 100%)',
-            boxShadow: '0 2px 6px rgba(0,0,0,0.6)',
+            boxShadow: `0 2px 6px rgba(0,0,0,0.6), 0 0 10px ${modeColors[colorMode]}`,
+            transition: 'box-shadow 0.2s',
           }}
         />
         <div
@@ -180,9 +189,20 @@ function ColorKnob({
       >
         COLOR
       </span>
+      <span
+        style={{
+          fontFamily: 'var(--font-vt323)',
+          fontSize: 9,
+          color: '#666',
+          marginTop: 2,
+        }}
+      >
+        {colorMode === 'color' ? '●' : colorMode === 'bw' ? '○' : '◐'}
+      </span>
     </div>
   )
 }
+
 
 // Randomiser button — plays a random song from any decade
 function RandomiserButton({ onRandomise }: { onRandomise: () => void }) {
