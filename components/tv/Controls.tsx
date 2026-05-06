@@ -138,6 +138,16 @@ function SmallKnob({
       >
         {label}
       </span>
+      <span
+        style={{
+          fontFamily: 'var(--font-vt323)',
+          fontSize: 9,
+          color: '#666',
+          marginTop: 2,
+        }}
+      >
+        (dbl-click reset)
+      </span>
     </div>
   )
 }

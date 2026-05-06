@@ -195,6 +195,21 @@ export default function ChannelKnob({ currentDecade, onChange }: ChannelKnobProp
                 boxShadow: '0 0 10px #ff4444, 0 0 20px #ff000088, 0 2px 4px rgba(0,0,0,0.5)',
               }}
             />
+            {/* Play icon center */}
+            <div
+              className="absolute"
+              style={{
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: 0,
+                height: 0,
+                borderLeft: '8px solid #ef4444',
+                borderTop: '5px solid transparent',
+                borderBottom: '5px solid transparent',
+                zIndex: 5,
+              }}
+            />
             {/* Center cap with enhanced metallic gradient */}
             <div
               className="absolute rounded-full"
