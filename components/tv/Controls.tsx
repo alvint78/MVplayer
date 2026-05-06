@@ -4,6 +4,7 @@ import { useState, useRef } from 'react'
 import { motion, useMotionValue, animate } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
 import type { ColorMode } from '@/app/page'
+import { useClickSound } from '@/hooks/useClickSound'
 
 interface ControlsProps {
   isPowered: boolean
