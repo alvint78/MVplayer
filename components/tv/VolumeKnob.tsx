@@ -2,6 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
+import { useClickSound } from '@/hooks/useClickSound'
 
 const MIN_ROT = -135
 const MAX_ROT = 135
@@ -31,6 +32,8 @@ export default function VolumeKnob({ volume, onChange }: VolumeKnobProps) {
   const dragging = useRef(false)
   const center = useRef({ x: 0, y: 0 })
   const lastAngle = useRef(0)
+  const lastClickVol = useRef(volume)
+  const { playClick } = useClickSound()
 
   const getAngle = (clientX: number, clientY: number) => {
     return Math.atan2(clientY - center.current.y, clientX - center.current.x) * (180 / Math.PI)
@@ -60,6 +63,11 @@ export default function VolumeKnob({ volume, onChange }: VolumeKnobProps) {
     rotation.set(newRot)
     const vol = rotationToVolume(newRot)
     onChange(vol)
+    // Play click every 5 volume units
+    if (Math.abs(vol - lastClickVol.current) >= 5) {
+      playClick()
+      lastClickVol.current = vol
+    }
   }
 
   const handlePointerUp = () => {

@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from 'react'
 import { motion, useMotionValue, animate } from 'framer-motion'
+import { useClickSound } from '@/hooks/useClickSound'
 
 const DECADES = ['60s', '70s', '80s', '90s', '00s', '10s', '20s'] as const
 export type Decade = (typeof DECADES)[number]
@@ -41,6 +42,7 @@ interface ChannelKnobProps {
 export default function ChannelKnob({ currentDecade, onChange }: ChannelKnobProps) {
   const rotation = useMotionValue(currentDecade ? DECADE_ANGLES[currentDecade] : 0)
   const knobRef = useRef<HTMLDivElement>(null)
+  const { playClick } = useClickSound()
 
   // Animate knob to the correct position when decade changes externally (e.g. randomiser)
   useEffect(() => {
@@ -85,12 +87,14 @@ export default function ChannelKnob({ currentDecade, onChange }: ChannelKnobProp
     const snapped = snapToNearest(rotation.get())
     animate(rotation, snapped, { duration: 0.15, ease: 'easeOut' })
     const decade = angleToDecade(snapped)
+    playClick()
     onChange(decade)
   }
 
   const handleClick = (decade: Decade) => {
     const angle = DECADE_ANGLES[decade]
     animate(rotation, angle, { duration: 0.25, ease: 'easeOut' })
+    playClick()
     onChange(decade)
   }
 

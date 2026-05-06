@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react'
 import { motion, useMotionValue, animate } from 'framer-motion'
 import { useIsMobile } from '@/hooks/use-mobile'
+import { useClickSound } from '@/hooks/useClickSound'
 import type { ColorMode } from '@/app/page'
 
 interface ControlsProps {
@@ -18,21 +19,21 @@ interface ControlsProps {
 }
 
 // Small rotary knob for BRIGHT/CONTRAST (like reference image)
-function SmallKnob({ 
-  label, 
-  value, 
+function SmallKnob({
+  label,
+  value,
   onChange,
-}: { 
+}: {
   label: string
   value: number
   onChange: (val: number) => void
 }) {
   const isMobile = useIsMobile()
   const KNOB_SIZE = isMobile ? 28 : 32
-  
+
   const MIN_ROT = -135
   const MAX_ROT = 135
-  
+
   const valueToRotation = (v: number) => ((v / 200) * (MAX_ROT - MIN_ROT)) + MIN_ROT
   const rotationToValue = (r: number) => Math.round(((r - MIN_ROT) / (MAX_ROT - MIN_ROT)) * 200)
 
@@ -41,6 +42,8 @@ function SmallKnob({
   const dragging = useRef(false)
   const center = useRef({ x: 0, y: 0 })
   const lastAngle = useRef(0)
+  const lastClickVal = useRef(value)
+  const { playClick } = useClickSound()
 
   const getAngle = (clientX: number, clientY: number) => {
     return Math.atan2(clientY - center.current.y, clientX - center.current.x) * (180 / Math.PI)
@@ -70,6 +73,11 @@ function SmallKnob({
     rotation.set(newRot)
     const val = rotationToValue(newRot)
     onChange(val)
+    // Play click every 10 units
+    if (Math.abs(val - lastClickVal.current) >= 10) {
+      playClick()
+      lastClickVal.current = val
+    }
   }
 
   const handlePointerUp = () => {
@@ -143,8 +151,10 @@ function ColorKnob({
   onChange: (mode: ColorMode) => void
 }) {
   const modes: ColorMode[] = ['color', 'bw', 'sepia']
+  const { playClick } = useClickSound()
 
   const handleClick = () => {
+    playClick()
     const currentIndex = modes.indexOf(colorMode)
     const nextIndex = (currentIndex + 1) % modes.length
     onChange(modes[nextIndex])
@@ -186,10 +196,15 @@ function ColorKnob({
 
 // Randomiser button — plays a random song from any decade
 function RandomiserButton({ onRandomise }: { onRandomise: () => void }) {
+  const { playClick } = useClickSound()
+
   return (
     <div className="flex flex-col items-center gap-2">
       <button
-        onClick={onRandomise}
+        onClick={() => {
+          playClick()
+          onRandomise()
+        }}
         className="focus:outline-none"
         style={{
           width: 48,
@@ -223,8 +238,10 @@ export default function Controls({
 }: ControlsProps) {
   const isMobile = useIsMobile()
   const [pressing, setPressing] = useState(false)
+  const { playClick } = useClickSound()
 
   const handlePowerClick = () => {
+    playClick()
     setPressing(true)
     onPowerToggle()
     setTimeout(() => setPressing(false), 150)
@@ -251,7 +268,7 @@ export default function Controls({
             width: isMobile ? 24 : 36,
             height: isMobile ? 24 : 36,
             borderRadius: '50%',
-            background: isPowered 
+            background: isPowered
               ? 'radial-gradient(circle at 40% 30%, #ef4444 0%, #b91c1c 60%, #7f1d1d 100%)'
               : 'radial-gradient(circle at 40% 30%, #52525b 0%, #27272a 100%)',
             boxShadow: isPowered
@@ -271,19 +288,19 @@ export default function Controls({
 
       {/* Center control knobs */}
       <div className="flex items-center" style={{ gap: isMobile ? 12 : 24 }}>
-        <SmallKnob 
-          label="BRIGHT" 
-          value={brightness} 
-          onChange={onBrightnessChange} 
+        <SmallKnob
+          label="BRIGHT"
+          value={brightness}
+          onChange={onBrightnessChange}
         />
-        <SmallKnob 
-          label="CONTRAST" 
-          value={contrast} 
-          onChange={onContrastChange} 
+        <SmallKnob
+          label="CONTRAST"
+          value={contrast}
+          onChange={onContrastChange}
         />
-        <ColorKnob 
-          colorMode={colorMode} 
-          onChange={onColorModeChange} 
+        <ColorKnob
+          colorMode={colorMode}
+          onChange={onColorModeChange}
         />
       </div>
 
