@@ -2,6 +2,7 @@
 
 import { useRef } from 'react'
 import { motion, useMotionValue } from 'framer-motion'
+import { useClickSound } from '@/hooks/useClickSound'
 
 const MIN_ROT = -135
 const MAX_ROT = 135
