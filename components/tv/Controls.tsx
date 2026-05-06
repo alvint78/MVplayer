@@ -11,11 +11,10 @@ interface ControlsProps {
   brightness: number
   contrast: number
   colorMode: ColorMode
-  scanlinesOn: boolean
   onBrightnessChange: (val: number) => void
   onContrastChange: (val: number) => void
   onColorModeChange: (mode: ColorMode) => void
-  onScanlinesToggle: () => void
+  onRandomise: () => void
 }
 
 // Small rotary knob for BRIGHT/CONTRAST (like reference image)
@@ -185,18 +184,12 @@ function ColorKnob({
   )
 }
 
-// Function button (oval shaped like reference)
-function FunctionButton({
-  scanlinesOn,
-  onToggle,
-}: {
-  scanlinesOn: boolean
-  onToggle: () => void
-}) {
+// Randomiser button — plays a random song from any decade
+function RandomiserButton({ onRandomise }: { onRandomise: () => void }) {
   return (
     <div className="flex flex-col items-center gap-2">
       <button
-        onClick={onToggle}
+        onClick={onRandomise}
         className="focus:outline-none"
         style={{
           width: 48,
@@ -205,29 +198,28 @@ function FunctionButton({
           borderRadius: 6,
           boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.6), 0 1px 0 rgba(255,255,255,0.05)',
         }}
-        aria-label={scanlinesOn ? 'Function on' : 'Function off'}
+        aria-label="Play random song from any decade"
       />
       <span
         className="text-zinc-500 uppercase tracking-wide"
         style={{ fontFamily: 'var(--font-vt323)', fontSize: 11 }}
       >
-        FUNCTION
+        RANDOM
       </span>
     </div>
   )
 }
 
-export default function Controls({ 
-  isPowered, 
+export default function Controls({
+  isPowered,
   onPowerToggle,
   brightness,
   contrast,
   colorMode,
-  scanlinesOn,
   onBrightnessChange,
   onContrastChange,
   onColorModeChange,
-  onScanlinesToggle,
+  onRandomise,
 }: ControlsProps) {
   const isMobile = useIsMobile()
   const [pressing, setPressing] = useState(false)
@@ -295,12 +287,9 @@ export default function Controls({
         />
       </div>
 
-      {/* Function button */}
+      {/* Randomiser button */}
       <div style={{ minWidth: isMobile ? 40 : 50 }}>
-        <FunctionButton 
-          scanlinesOn={scanlinesOn} 
-          onToggle={onScanlinesToggle} 
-        />
+        <RandomiserButton onRandomise={onRandomise} />
       </div>
     </div>
   )

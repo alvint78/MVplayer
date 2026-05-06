@@ -8,6 +8,7 @@ import type { Decade } from '@/lib/videos'
 import { getRandomVideo } from '@/lib/videos'
 
 const HISTORY_LIMIT = 5
+const ALL_DECADES: Decade[] = ['60s', '70s', '80s', '90s', '00s', '10s', '20s']
 
 function getStoredVolume(): number {
   if (typeof window === 'undefined') return 50
@@ -60,7 +61,6 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
   const [brightness, setBrightness] = useState(100)
   const [contrast, setContrast] = useState(100)
   const [colorMode, setColorMode] = useState<ColorMode>('color')
-  const [scanlinesOn, setScanlinesOn] = useState(true)
 
   // Restore volume from localStorage on mount
   useEffect(() => {
@@ -96,17 +96,6 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
     player.setVolume(stored)
   }, [])
 
-  const handlePlayerStateChange = useCallback((state: number) => {
-    // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
-    if (state === 1) {
-      setIsPlaying(true)
-      setIsStatic(false)
-    } else if (state === 0) {
-      // Video ended — auto-advance to next video in same decade
-      setIsPlaying(false)
-    }
-  }, [])
-
   const loadDecade = useCallback(
     (decade: Decade) => {
       if (!isPowered) return
@@ -136,6 +125,28 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
     [history, isPowered]
   )
 
+  // Refs to allow handlePlayerStateChange to read fresh values without
+  // becoming a new function reference (which would break YT event listener)
+  const currentDecadeRef = useRef<Decade | null>(null)
+  useEffect(() => { currentDecadeRef.current = currentDecade }, [currentDecade])
+
+  const loadDecadeRef = useRef(loadDecade)
+  useEffect(() => { loadDecadeRef.current = loadDecade }, [loadDecade])
+
+  const handlePlayerStateChange = useCallback((state: number) => {
+    // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
+    if (state === 1) {
+      setIsPlaying(true)
+      setIsStatic(false)
+    } else if (state === 0) {
+      setIsPlaying(false)
+      // Auto-advance to next random video in the same decade
+      if (currentDecadeRef.current) {
+        loadDecadeRef.current(currentDecadeRef.current)
+      }
+    }
+  }, [])
+
   const handleDecadeChange = useCallback(
     (decade: Decade) => {
       setCurrentDecade(decade)
@@ -143,6 +154,13 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
     },
     [loadDecade]
   )
+
+  const handleRandomise = useCallback(() => {
+    if (!isPowered) return
+    const decade = ALL_DECADES[Math.floor(Math.random() * ALL_DECADES.length)]
+    setCurrentDecade(decade)
+    loadDecade(decade)
+  }, [isPowered, loadDecade])
 
   const handleVolumeChange = useCallback((vol: number) => {
     setVolume(vol)
@@ -164,14 +182,10 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
     setColorMode(mode)
   }, [])
 
-  const handleScanlinesToggle = useCallback(() => {
-    setScanlinesOn((prev) => !prev)
-  }, [])
-
   return (
     <main
       className="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4"
-      style={{ 
+      style={{
         background: 'linear-gradient(180deg, #09090b 0%, #0f0d0a 50%, #1a1512 100%)',
       }}
     >
@@ -213,14 +227,13 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
         brightness={brightness}
         contrast={contrast}
         colorMode={colorMode}
-        scanlinesOn={scanlinesOn}
         onDecadeChange={handleDecadeChange}
         onVolumeChange={handleVolumeChange}
         onPowerToggle={handlePowerToggle}
         onBrightnessChange={handleBrightnessChange}
         onContrastChange={handleContrastChange}
         onColorModeChange={handleColorModeChange}
-        onScanlinesToggle={handleScanlinesToggle}
+        onRandomise={handleRandomise}
         onPlayerReady={handlePlayerReady}
         onPlayerStateChange={handlePlayerStateChange}
       />
