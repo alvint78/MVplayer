@@ -2,6 +2,7 @@
 
 import { useRef, useEffect } from 'react'
 import { motion, useMotionValue, animate } from 'framer-motion'
+import { useClickSound } from '@/hooks/useClickSound'
 
 const DECADES = ['60s', '70s', '80s', '90s', '00s', '10s', '20s'] as const
 export type Decade = (typeof DECADES)[number]
