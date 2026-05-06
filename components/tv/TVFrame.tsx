@@ -24,14 +24,13 @@ interface TVFrameProps {
   brightness: number
   contrast: number
   colorMode: ColorMode
-  scanlinesOn: boolean
   onDecadeChange: (decade: Decade) => void
   onVolumeChange: (volume: number) => void
   onPowerToggle: () => void
   onBrightnessChange: (val: number) => void
   onContrastChange: (val: number) => void
   onColorModeChange: (mode: ColorMode) => void
-  onScanlinesToggle: () => void
+  onRandomise: () => void
   onPlayerReady: (player: YT.Player) => void
   onPlayerStateChange: (state: number) => void
 }
@@ -48,14 +47,13 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
     brightness,
     contrast,
     colorMode,
-    scanlinesOn,
     onDecadeChange,
     onVolumeChange,
     onPowerToggle,
     onBrightnessChange,
     onContrastChange,
     onColorModeChange,
-    onScanlinesToggle,
+    onRandomise,
     onPlayerReady,
     onPlayerStateChange,
   },
@@ -95,7 +93,7 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
               brightness={brightness}
               contrast={contrast}
               colorMode={colorMode}
-              scanlinesOn={scanlinesOn}
+              scanlinesOn={true}
               onPlayerReady={onPlayerReady}
               onPlayerStateChange={onPlayerStateChange}
             />
@@ -209,7 +207,7 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
                 brightness={brightness}
                 contrast={contrast}
                 colorMode={colorMode}
-                scanlinesOn={scanlinesOn}
+                scanlinesOn={true}
                 onPlayerReady={onPlayerReady}
                 onPlayerStateChange={onPlayerStateChange}
               />
@@ -308,17 +306,16 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
           overflow: 'hidden',
         }}
       >
-        <Controls 
-          isPowered={isPowered} 
+        <Controls
+          isPowered={isPowered}
           onPowerToggle={onPowerToggle}
           brightness={brightness}
           contrast={contrast}
           colorMode={colorMode}
-          scanlinesOn={scanlinesOn}
           onBrightnessChange={onBrightnessChange}
           onContrastChange={onContrastChange}
           onColorModeChange={onColorModeChange}
-          onScanlinesToggle={onScanlinesToggle}
+          onRandomise={onRandomise}
         />
       </div>
     </div>

@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import { motion, useMotionValue, animate } from 'framer-motion'
 
 const DECADES = ['60s', '70s', '80s', '90s', '00s', '10s', '20s'] as const
@@ -41,6 +41,13 @@ interface ChannelKnobProps {
 export default function ChannelKnob({ currentDecade, onChange }: ChannelKnobProps) {
   const rotation = useMotionValue(currentDecade ? DECADE_ANGLES[currentDecade] : 0)
   const knobRef = useRef<HTMLDivElement>(null)
+
+  // Animate knob to the correct position when decade changes externally (e.g. randomiser)
+  useEffect(() => {
+    if (currentDecade) {
+      animate(rotation, DECADE_ANGLES[currentDecade], { duration: 0.3, ease: 'easeOut' })
+    }
+  }, [currentDecade])
   const dragging = useRef(false)
   const startAngle = useRef(0)
   const startRotation = useRef(0)
