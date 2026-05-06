@@ -193,7 +193,7 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
               style={{
                 background: '#0a0a0a',
                 borderRadius: 16,
-                padding: 12,
+                padding: '10px 12px',
                 boxShadow: 'inset 0 4px 20px rgba(0,0,0,0.95), inset 0 0 0 3px #151517',
                 marginRight: 12,
               }}
