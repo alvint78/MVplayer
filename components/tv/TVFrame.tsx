@@ -1,10 +1,11 @@
 'use client'
 
-import { forwardRef } from 'react'
+import { forwardRef, useState } from 'react'
 import ChannelKnob, { type Decade } from './ChannelKnob'
 import VolumeKnob from './VolumeKnob'
 import Controls from './Controls'
 import Screen, { type ScreenHandle } from './Screen'
+import PlaylistPanel from './PlaylistPanel'
 import type { ColorMode } from '@/app/page'
 
 interface VideoMeta {
@@ -31,6 +32,7 @@ interface TVFrameProps {
   onContrastChange: (val: number) => void
   onColorModeChange: (mode: ColorMode) => void
   onRandomise: () => void
+  onPlaylistItemSelect: (videoId: string, decade: Decade, title: string, artist: string, year: number) => void
   onPlayerReady: (player: YT.Player) => void
   onPlayerStateChange: (state: number) => void
 }
@@ -54,11 +56,19 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
     onContrastChange,
     onColorModeChange,
     onRandomise,
+    onPlaylistItemSelect,
     onPlayerReady,
     onPlayerStateChange,
   },
   ref
 ) {
+  const [showPlaylist, setShowPlaylist] = useState(false)
+
+  const handlePlaylistSelect = (videoId: string, decade: Decade, title: string, artist: string, year: number) => {
+    setShowPlaylist(false)
+    onPlaylistItemSelect(videoId, decade, title, artist, year)
+  }
+
   return (
     <div
       className={`relative inline-flex tv-shadow w-full ${isMobile ? 'flex-col' : 'flex-col'}`}
@@ -70,6 +80,15 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
         width: '100%',
       }}
     >
+      {/* Easter egg playlist overlay */}
+      {showPlaylist && (
+        <PlaylistPanel
+          nowPlaying={nowPlaying}
+          onSelect={handlePlaylistSelect}
+          onClose={() => setShowPlaylist(false)}
+        />
+      )}
+
       {isMobile ? (
         // MOBILE LAYOUT: Stack vertically
         <>
@@ -177,7 +196,12 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
               >
                 <div className="flex-1" style={{ background: '#ef4444' }} />
                 <div className="flex-1" style={{ background: '#22c55e' }} />
-                <div className="flex-1" style={{ background: '#3b82f6' }} />
+                <div
+                  className="flex-1"
+                  style={{ background: '#3b82f6', cursor: 'pointer' }}
+                  onClick={() => setShowPlaylist((v) => !v)}
+                  title="Show playlist"
+                />
               </div>
             </div>
           </div>
@@ -260,7 +284,12 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
                   <div className="flex h-2 flex-1 rounded overflow-hidden" style={{ boxShadow: '0 1px 2px rgba(0,0,0,0.5)' }}>
                     <div className="flex-1" style={{ background: '#ef4444' }} />
                     <div className="flex-1" style={{ background: '#22c55e' }} />
-                    <div className="flex-1" style={{ background: '#3b82f6' }} />
+                    <div
+                  className="flex-1"
+                  style={{ background: '#3b82f6', cursor: 'pointer' }}
+                  onClick={() => setShowPlaylist((v) => !v)}
+                  title="Show playlist"
+                />
                   </div>
                 </div>
                 

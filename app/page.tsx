@@ -183,6 +183,22 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
     setColorMode(mode)
   }, [])
 
+  const handlePlaylistSelect = useCallback(
+    (videoId: string, decade: Decade, title: string, artist: string, year: number) => {
+      if (!isPowered) return
+      setCurrentDecade(decade)
+      setNowPlaying({ title, artist, year })
+      setHistory((prev) => [videoId, ...prev].slice(0, HISTORY_LIMIT))
+      setIsStatic(true)
+      setIsPlaying(false)
+      setTimeout(() => {
+        if (screenRef.current) screenRef.current.loadVideo(videoId)
+        setTimeout(() => setIsStatic(false), 800)
+      }, 500)
+    },
+    [isPowered]
+  )
+
   return (
     <main
       className="min-h-screen flex flex-col items-center justify-center p-2 sm:p-4"
@@ -235,6 +251,7 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
         onContrastChange={handleContrastChange}
         onColorModeChange={handleColorModeChange}
         onRandomise={handleRandomise}
+        onPlaylistItemSelect={handlePlaylistSelect}
         onPlayerReady={handlePlayerReady}
         onPlayerStateChange={handlePlayerStateChange}
       />
