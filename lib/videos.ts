@@ -207,6 +207,7 @@ export const videos: Record<Decade, VideoEntry[]> = {
     {"title":"As","artist":"Stevie Wonder","videoId":"GYQfWJNWe3I","year":1976,"tags":["soul"]},
     {"title":"You Are the Sunshine of My Life","artist":"Stevie Wonder","videoId":"yYj1DMHwFy4","year":1972,"tags":["soul"]},
     {"title":"Isn't She Lovely","artist":"Stevie Wonder","videoId":"uPBvq7yewIk","year":1974,"tags":["soul"]},
+    {"title":"Boys Don't Cry","artist":"The Cure","videoId":"MEqjpgwPjVM","year":1979,"tags":["rock"]},
     {"title":"Hole in the Roof","artist":"Thin Lizzy","videoId":"Q3-TwrVDhD8","year":1977,"tags":["rock"]}
   ],
   "80s": [
@@ -221,8 +222,6 @@ export const videos: Record<Decade, VideoEntry[]> = {
     {"title":"You're the Only Woman","artist":"Ambrosia","videoId":"CsRW5uZryQc","year":1980,"tags":["pop"]},
     {"title":"Blue Monday","artist":"New Order","videoId":"TsgLhkjY4q0","year":1983,"tags":["electronic"]},
     {"title":"Just Like Heaven","artist":"The Cure","videoId":"1ASpBpT8bRQ","year":1987,"tags":["rock"]},
-    {"title":"Boys Don't Cry","artist":"The Cure","videoId":"MEqjpgwPjVM","year":1979,"tags":["rock"]},
-    {"title":"Friday I'm in Love","artist":"The Cure","videoId":"mGgMZpGYiy8","year":1992,"tags":["rock"]},
     {"title":"King of Pain","artist":"The Police","videoId":"dWd371wAA3s","year":1983,"tags":["rock"]},
     {"title":"Wrapped Around Your Finger","artist":"The Police","videoId":"svWINSRhQU0","year":1983,"tags":["rock"]},
     {"title":"Love Shack","artist":"The B-52's","videoId":"9SOryJvTAGs","year":1989,"tags":["pop"]},
