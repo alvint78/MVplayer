@@ -35,6 +35,8 @@ interface TVFrameProps {
   onPlaylistItemSelect: (videoId: string, decade: Decade, title: string, artist: string, year: number) => void
   onPlayerReady: (player: YT.Player) => void
   onPlayerStateChange: (state: number) => void
+  onPlayerError?: (code: number) => void
+  skipNotice: string | null
 }
 
 const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
@@ -59,6 +61,8 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
     onPlaylistItemSelect,
     onPlayerReady,
     onPlayerStateChange,
+    onPlayerError,
+    skipNotice,
   },
   ref
 ) {
@@ -115,6 +119,7 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
               scanlinesOn={true}
               onPlayerReady={onPlayerReady}
               onPlayerStateChange={onPlayerStateChange}
+              onPlayerError={onPlayerError}
             />
           </div>
 
@@ -132,9 +137,11 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
               whiteSpace: 'nowrap',
             }}
           >
-            {nowPlaying && (
+            {skipNotice ? (
+              <span style={{ color: '#ef4444' }}>{skipNotice}</span>
+            ) : nowPlaying ? (
               <span>{nowPlaying.artist} • {nowPlaying.year}</span>
-            )}
+            ) : null}
           </div>
 
           {/* Controls row - knobs side by side */}
@@ -234,6 +241,7 @@ const TVFrame = forwardRef<ScreenHandle, TVFrameProps>(function TVFrame(
                 scanlinesOn={true}
                 onPlayerReady={onPlayerReady}
                 onPlayerStateChange={onPlayerStateChange}
+                onPlayerError={onPlayerError}
               />
             </div>
 

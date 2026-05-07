@@ -5,7 +5,7 @@ import { useIsMobile } from '@/hooks/use-mobile'
 import TVFrame from '@/components/tv/TVFrame'
 import type { ScreenHandle } from '@/components/tv/Screen'
 import type { Decade } from '@/lib/videos'
-import { getRandomVideo } from '@/lib/videos'
+import { getRandomVideo, getFailedVideos, markVideoAsFailed } from '@/lib/videos'
 import { useClickSound } from '@/hooks/useClickSound'
 
 const HISTORY_LIMIT = 5
@@ -57,16 +57,28 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
     artist: string
     year: number
   } | null>(null)
+  const [failedVideos, setFailedVideos] = useState<string[]>([])
+  const [skipNotice, setSkipNotice] = useState<string | null>(null)
 
   // Display adjustment state
   const [brightness, setBrightness] = useState(100)
   const [contrast, setContrast] = useState(100)
   const [colorMode, setColorMode] = useState<ColorMode>('color')
 
-  // Restore volume from localStorage on mount
+  const playbackTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const isPlayingRef = useRef(false)
+  const currentVideoIdRef = useRef<string>('')
+  const failedVideosRef = useRef<string[]>([])
+  const skipNoticeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const handleVideoFailedRef = useRef<((videoId: string, decade: Decade) => void) | null>(null)
+
+  // Restore volume and failed videos from localStorage on mount
   useEffect(() => {
     const stored = getStoredVolume()
     setVolume(stored)
+    const failed = getFailedVideos()
+    setFailedVideos(failed)
+    failedVideosRef.current = failed
   }, [])
 
   // Sync volume with player
@@ -101,7 +113,14 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
     (decade: Decade) => {
       if (!isPowered) return
 
-      const video = getRandomVideo(decade, history)
+      const failed = failedVideosRef.current
+      const video =
+        getRandomVideo(decade, history, failed) ??
+        getRandomVideo(decade, [], failed) ??
+        getRandomVideo(decade, [], [])
+
+      if (!video) return
+
       setNowPlaying({ title: video.title, artist: video.artist, year: video.year })
       setHistory((prev) => {
         const next = [video.videoId, ...prev].slice(0, HISTORY_LIMIT)
@@ -111,13 +130,23 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
       // Trigger static transition
       setIsStatic(true)
       setIsPlaying(false)
+      isPlayingRef.current = false
 
       setTimeout(() => {
         if (screenRef.current) {
           screenRef.current.loadVideo(video.videoId)
         }
-        // Player state change to PLAYING will clear static
-        // But we also set a fallback clear
+        currentVideoIdRef.current = video.videoId
+
+        // 3-second timeout: if playback hasn't started, skip the video
+        if (playbackTimeoutRef.current) clearTimeout(playbackTimeoutRef.current)
+        playbackTimeoutRef.current = setTimeout(() => {
+          if (!isPlayingRef.current) {
+            handleVideoFailedRef.current?.(video.videoId, decade)
+          }
+        }, 3000)
+
+        // Fallback static clear
         setTimeout(() => {
           setIsStatic(false)
         }, 800)
@@ -137,6 +166,11 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
   const handlePlayerStateChange = useCallback((state: number) => {
     // YT.PlayerState.PLAYING = 1, PAUSED = 2, ENDED = 0
     if (state === 1) {
+      isPlayingRef.current = true
+      if (playbackTimeoutRef.current) {
+        clearTimeout(playbackTimeoutRef.current)
+        playbackTimeoutRef.current = null
+      }
       setIsPlaying(true)
       setIsStatic(false)
     } else if (state === 0) {
@@ -162,6 +196,35 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
     setCurrentDecade(decade)
     loadDecade(decade)
   }, [isPowered, loadDecade])
+
+  const handleVideoFailed = useCallback(
+    (videoId: string, decade: Decade) => {
+      markVideoAsFailed(videoId)
+      const updated = getFailedVideos()
+      setFailedVideos(updated)
+      failedVideosRef.current = updated
+
+      if (skipNoticeTimerRef.current) clearTimeout(skipNoticeTimerRef.current)
+      setSkipNotice('Video unavailable, playing next...')
+      skipNoticeTimerRef.current = setTimeout(() => setSkipNotice(null), 1500)
+
+      loadDecade(decade)
+    },
+    [loadDecade]
+  )
+
+  // Keep ref in sync so the playback timeout closure can call the latest version
+  useEffect(() => { handleVideoFailedRef.current = handleVideoFailed }, [handleVideoFailed])
+
+  const handlePlayerError = useCallback((_code: number) => {
+    if (playbackTimeoutRef.current) {
+      clearTimeout(playbackTimeoutRef.current)
+      playbackTimeoutRef.current = null
+    }
+    if (currentVideoIdRef.current && currentDecadeRef.current) {
+      handleVideoFailedRef.current?.(currentVideoIdRef.current, currentDecadeRef.current)
+    }
+  }, [])
 
   const handleVolumeChange = useCallback((vol: number) => {
     setVolume(vol)
@@ -254,6 +317,8 @@ function PageContent({ screenRef }: { screenRef: React.RefObject<ScreenHandle | 
         onPlaylistItemSelect={handlePlaylistSelect}
         onPlayerReady={handlePlayerReady}
         onPlayerStateChange={handlePlayerStateChange}
+        onPlayerError={handlePlayerError}
+        skipNotice={skipNotice}
       />
     </main>
   )

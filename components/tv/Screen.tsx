@@ -50,6 +50,7 @@ interface ScreenProps {
   scanlinesOn: boolean
   onPlayerReady: (player: YT.Player) => void
   onPlayerStateChange: (state: number) => void
+  onPlayerError?: (code: number) => void
 }
 
 export interface ScreenHandle {
@@ -57,7 +58,7 @@ export interface ScreenHandle {
 }
 
 const Screen = forwardRef<ScreenHandle, ScreenProps>(function Screen(
-  { isStatic, isPlaying, videoId, nowPlaying, brightness, contrast, colorMode, scanlinesOn, onPlayerReady, onPlayerStateChange },
+  { isStatic, isPlaying, videoId, nowPlaying, brightness, contrast, colorMode, scanlinesOn, onPlayerReady, onPlayerStateChange, onPlayerError },
   ref
 ) {
   const playerContainerRef = useRef<HTMLDivElement>(null)
@@ -95,6 +96,11 @@ const Screen = forwardRef<ScreenHandle, ScreenProps>(function Screen(
           onStateChange: (event) => {
             if (event.data !== undefined) {
               onPlayerStateChange(event.data)
+            }
+          },
+          onError: (event) => {
+            if (event.data !== undefined) {
+              onPlayerError?.(event.data)
             }
           },
         },

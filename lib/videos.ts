@@ -255,9 +255,27 @@ export const videos: Record<Decade, VideoEntry[]> = {
   ]
 }
 
-export function getRandomVideo(decade: Decade, history: string[]): VideoEntry {
+const FAILED_KEY = 'retrotv-failed-videos'
+
+export function getFailedVideos(): string[] {
+  if (typeof window === 'undefined') return []
+  try { return JSON.parse(localStorage.getItem(FAILED_KEY) || '[]') } catch { return [] }
+}
+
+export function markVideoAsFailed(videoId: string): void {
+  if (typeof window === 'undefined') return
+  try {
+    const list = getFailedVideos()
+    if (!list.includes(videoId))
+      localStorage.setItem(FAILED_KEY, JSON.stringify([...list, videoId]))
+  } catch {}
+}
+
+export function getRandomVideo(decade: Decade, history: string[], failed: string[] = []): VideoEntry | null {
   const list = videos[decade]
-  const filtered = list.filter((v) => !history.includes(v.videoId))
-  const pool = filtered.length ? filtered : list
+  const available = list.filter((v) => !failed.includes(v.videoId))
+  if (available.length === 0) return null
+  const filtered = available.filter((v) => !history.includes(v.videoId))
+  const pool = filtered.length ? filtered : available
   return pool[Math.floor(Math.random() * pool.length)]
 }
