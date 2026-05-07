@@ -30,7 +30,7 @@ export default function PlaylistPanel({ nowPlaying, onSelect, onClose }: Playlis
           borderBottom: '1px solid #1a3a1a',
         }}
       >
-        <span style={{ color: '#22c55e', fontSize: 18, letterSpacing: '0.15em' }}>
+        <span style={{ color: '#22c55e', fontSize: 20, letterSpacing: '0.15em' }}>
           ▶ PLAYLIST
         </span>
         <button
@@ -60,7 +60,7 @@ export default function PlaylistPanel({ nowPlaying, onSelect, onClose }: Playlis
               style={{
                 padding: '6px 14px 3px',
                 color: '#ef4444',
-                fontSize: 13,
+                fontSize: 15,
                 letterSpacing: '0.2em',
                 borderTop: '1px solid #1a1a1c',
               }}
@@ -81,7 +81,7 @@ export default function PlaylistPanel({ nowPlaying, onSelect, onClose }: Playlis
                     display: 'flex',
                     alignItems: 'baseline',
                     gap: 6,
-                    padding: '3px 14px',
+                    padding: '4px 14px',
                     background: isActive ? 'rgba(34,197,94,0.08)' : 'transparent',
                     transition: 'background 0.1s',
                     cursor: 'pointer',
@@ -93,23 +93,22 @@ export default function PlaylistPanel({ nowPlaying, onSelect, onClose }: Playlis
                     if (!isActive) (e.currentTarget as HTMLElement).style.background = 'transparent'
                   }}
                 >
-                  <span style={{ color: isActive ? '#22c55e' : '#3a3a3f', fontSize: 11, flexShrink: 0 }}>
+                  <span style={{ color: isActive ? '#22c55e' : '#3a3a3f', fontSize: 13, flexShrink: 0 }}>
                     {isActive ? '▶' : '·'}
                   </span>
                   <span
                     style={{
                       color: isActive ? '#22c55e' : '#52525b',
-                      fontSize: 13,
+                      fontSize: 16,
                       overflow: 'hidden',
                       textOverflow: 'ellipsis',
                       whiteSpace: 'nowrap',
-                      flex: 1,
                     }}
                   >
                     {video.title}
                   </span>
-                  <span style={{ color: '#3a3a3f', fontSize: 11, flexShrink: 0 }}>
-                    {video.artist} ({video.year})
+                  <span style={{ color: '#3a3a3f', fontSize: 16, flexShrink: 0 }}>
+                    — {video.artist} ({video.year})
                   </span>
                 </button>
               )
