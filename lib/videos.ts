@@ -420,7 +420,7 @@ export const videos: Record<Decade, VideoEntry[]> = {
     {"title":"You And Me","artist":"Lifehouse","videoId":"ac3HkriqdGQ","year":2005,"tags":["rock"]},
     {"title":"Smooth Criminal","artist":"Alien Ant Farm","videoId":"CDl9ZMfj6aE","year":2001,"tags":["rock"]},
     {"title":"Nobody","artist":"Wonder Girls","videoId":"QZBn1e9pr2Q","year":2008,"tags":["kpop"]},
-    {"title":"Genie","artist":"Girls' Generation","videoId":"6SwiSpudKWI","year":2009,"tags":["kpop"]}
+    {"title":"Genie","artist":"Girls' Generation","videoId":"6SwiSpudKWI","year":2009,"tags":["kpop"]},
     {"title":"By the Way","artist":"Red Hot Chili Peppers","videoId":"PO5-rl43Rho","year":2002,"tags":["funk"]},
     {"title":"Yellow","artist":"Coldplay","videoId":"yKNxeF4KMsY","year":2000,"tags":["britpop"]},
     {"title":"光年之外","artist":"GEM","videoId":"T4SimnaiktU","year":2016,"tags":["mandopop"]},
