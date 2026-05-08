@@ -313,7 +313,7 @@ export const videos: Record<Decade, VideoEntry[]> = {
     {"title":"Parklife","artist":"Blur","videoId":"YSuHrTfcikU","year":1994,"tags":["britpop"]},
     {"title":"There's No Other Way","artist":"Blur","videoId":"LJzCYSdrHMI","year":1991,"tags":["britpop"]},
     {"title":"Champagne Supernova","artist":"Oasis","videoId":"tI-5uv4wryI","year":1995,"tags":["britpop"]},
-    {"title":"Girls & Boys","artist":"Blur","videoId":"WDswiT87oo8","year":1994,"tags":["britpop"]}
+    {"title":"Girls & Boys","artist":"Blur","videoId":"WDswiT87oo8","year":1994,"tags":["britpop"]},
     {"title":"Losing My Religion","artist":"R.E.M.","videoId":"xwtdhWltSIg","year":1991,"tags":["rock"]},
     {"title":"Black or White","artist":"Michael Jackson","videoId":"F2AitTPI5U0","year":1991,"tags":["pop"]},
     {"title":"Creep","artist":"Radiohead","videoId":"XFkzRNyygfk","year":1992,"tags":["rock"]},
